@@ -70,8 +70,7 @@ Linux:
 - open a terminal window
 - type:
 ```
-export RUST_LOG=rls=debug
-/path/to/my/eclipse&
+RUST_LOG=rls=debug /path/to/my/eclipse&
 ```
 
 Windows:
@@ -151,21 +150,52 @@ https://github.com/rust-lang/rls/issues/1161
 
 Installing/upgrading to an up-to-date version of Eclipse IDE for Rust Developers such as 2018-09 or 2018-12, or manually updating from the Snapshot update sites, will resolve it.
 
+### Annoying autoclosing
+
+The implementation of closing bracket or quote sometimes inserts more than desired when typing quickly. This is currently (2018/12) being addressed in https://github.com/eclipse/tm4e/issues/192.
+
+#### Workaround
+
+In the meantime, if you find autoclosing too annoying, you can disable it altogether:
+
+1. **Preferences** -> **TextMate** -> **Language Configurations** -> **org.eclipse.corrosion.rust** -> **Auto Closing Pairs**
+2. (disable) Enable auto closing brackets` as a workaround.
+
+
+### Error compiling dependent crate (or RLS is being nasty)
+
+Sometimes RLS just stops working with not much of a diagnosis:
+
+ https://github.com/eclipse/corrosion/issues/162
+
+This may be caused by a number of reasons, possibly a misconfiguration, or a missing path, or a regression in either RLS or the IDE.
+
+https://github.com/rust-lang-nursery/rls/issues/1078
+https://github.com/eclipse/corrosion/issues/141
+
+You can try to run 
+
+`rls --cli`
+
+from the root of your crate and at least see if there is a workaround for that specific crate. 
+
+#### Workarounds
+
+- It has been reported that, in some cases, closing the IDE and doing a full `cargo clean` of the affected project can fix the problem.
+
 ## Living on the bleeding edge
 
-- make sure you have a recent/working toolchain with RLS (tested with nightly 2018-12-13)
-- download and install Eclipse IDE For Rust Developer from https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-rust-developers-includes-incubating-components
-- start the installed Eclipse. This will not work out of the box and will exhibit the problem you reported with `codeActionKind`. Ignore it for now.
-- Help -> Install new software
+When everything else fails there is still the last resort of starting over and upgrading to the latest version of *everything*
 
-Do not press `Next >`. Instead, add the following three sites via `Add...` or `Manage...`
-
-Corrosion Snapshots - http://download.eclipse.org/corrosion/snapshots/
-TM4E Snapshots - http://download.eclipse.org/tm4e/snapshots/
-LSP4E Snapshots - http://download.eclipse.org/lsp4e/snapshots/
-
-- Close the "Install" window
-- Help -> Check for updates
-- accept the proposed selection (in my case Corrosion wanted to upgrade)
-- press Next/Finish to the end
-- restart Eclipse when prompted
+1. make sure you have a recent/working toolchain with RLS (tested with nightly 2018-12-13)
+2. download and install Eclipse IDE For Rust Developer from https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-rust-developers-includes-incubating-components
+3. start the installed Eclipse. This will not work out of the box and will exhibit the problem you reported with `codeActionKind`. Ignore it for now.
+1. **Help** -> **Install new software** .Do not press `Next >`. Instead, add the following three sites via `Add...` or `Manage...`
+  * Corrosion Snapshots - http://download.eclipse.org/corrosion/snapshots/
+  * TM4E Snapshots - http://download.eclipse.org/tm4e/snapshots/
+  * LSP4E Snapshots - http://download.eclipse.org/lsp4e/snapshots/
+1. Close the "Install" window
+2. **Help** -> **Check for updates**
+3. accept the proposed selection (in my case Corrosion wanted to upgrade)
+4. press **Next**/**Finish** to the end
+5. restart Eclipse when prompted

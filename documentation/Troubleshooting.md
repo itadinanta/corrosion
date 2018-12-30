@@ -2,13 +2,17 @@
 
 This is a collection of troubleshooting tips and workarounds which have often popped up in discussion on the https://github.com/eclipse/corrosion/issues GitHub tracker.
 
+Before posting a bug report or asking for help it is recommended to collect as much information as you can about the problem you're having. This is so there are higher chances that 1) you ask the right people/project and 2) the people above will know where to look for the bug/issue without digging too much. This will generally result in much better solutions and shorter turnarounds.
+
+Reading through this document should provide you with a very high-altitude view on where the problem may be rooted and how to best look for, and feed back, debugging information.
+
+However, pinpointing a malfunctioning component is often not trivial, in which case searching the main https://github.com/eclipse/corrosion/issues, or posting to it, is usually a good first step, but will likely take longer to be addressed.
+
 ----
 
 ### Components and where to find them
 
 The Eclipse IDE for Rust Developer functionality is provided by cooperation of a few main components. In the general case, the installation process will spare you the pain of finding and putting these together, but it's often necessary at least to know about them when tracking the root cause of an issue.
-
-Problems will be resolved a lot quicker if they're posted to the relevant sub-project issue tracker earlier on. However, pinpointing a malfunctioning component is often not trivial, in which case searching the main https://github.com/eclipse/corrosion/issues, or posting to it, is usually a good first step.
 
 #### The **Eclipse IDE** platform
 
@@ -179,6 +183,16 @@ Some useful diagnostic messages are sent to the Eclipse `Error log` view:
 
 ![image](https://user-images.githubusercontent.com/889291/49970820-6c8ebf00-ff24-11e8-8bc2-72ab4c92ece4.png)
 
+### JVM stack trace
+
+If Eclipse gets stuck and become unresponsive, whoever is investigating your report will need to know what the Java VM machine running Eclipse was doing at the time of the blockage.
+
+If this happens, it is very handy if a `jstack` dump is attached to the bug/problem report. On Linux you can attach a stack dump
+
+1. finding out the PID of the JVM running Eclipse, typically using `ps -ef | grep java` or `pgrep java`
+2. generating a stack dump of the PID listed by the command above by running `jstack <PID> > java_stack_trace.txt`
+3. uploading the `java_stack_trace.txt` to the bug report
+
 ----
 
 ## Common issues
@@ -258,7 +272,7 @@ In the meantime, if you find autoclosing too annoying, you can disable it altoge
 2. (disable) Enable auto closing brackets` as a workaround.
 
 
-### Error compiling dependent crate (or RLS is being nasty)
+#### Error compiling dependent crate (or RLS is being nasty)
 
 Sometimes RLS just stops working with not much of a diagnosis:
 
@@ -278,6 +292,8 @@ from the root of your crate and at least see if there is a workaround for that s
 ##### Workarounds
 
 - It has been reported that, in some cases, closing the IDE and doing a full `cargo clean` of the affected project can fix the problem.
+
+----
 
 ## Living on the bleeding edge
 

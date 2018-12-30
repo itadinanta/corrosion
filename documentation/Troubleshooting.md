@@ -92,19 +92,30 @@ As Corrosion uses TextMate, the **Editors** section for **Colors and Fonts** has
 
 #### rls.conf
 
-Functionality to read `.rls.conf` from the RLS directly has been long removed. Eclipse provides an alternative for this configuration file.
+Functionality to read `.rls.conf` from the RLS directly has been long removed. Eclipse provides an alternative for this configuration file. The `$HOME/.cargo/rls.conf` file contains the startup settings for the `rls` and it is optional. In this file you should be able to specify any of the valid RLS settings, as listed in https://github.com/rust-lang/rls#configuration.
 
-The `.cargo/rls.conf` file contains the startup settings for the `rls` and it is optional. If you don't have one, Corrosion will ignore it and guess some sensible defaults. 
+If this file exists, the plugin attempts to load and parse it as as a Json object, then forwards its whole content to the initialize RLS method as the payload of the `initializationOptions` field. If you don't have one, Corrosion will ignore it and guess some sensible defaults, namely: 
 
-In this file you should be able to specify any of the valid RLS settings, as listed in https://github.com/rust-lang/rls#configuration. Syntax for these options is IDE-specific: the PR at https://github.com/eclipse/corrosion/pull/183 contains an example config file for Corrosion.
+```
+{
+	"settings": {
+		"rust": {
+			"goto_def_racer_fallback": true,
+			"clippy_preference": "on"
+		}
+	}
+}
+```
 
-Unfortunately, none of the settings in RLS, as I can understand, allow you to specify `rustc` path, which should be set up for you by `rustup` (check your env vars?) or `racer` - which AFAIK is linked into the RLS as a library rather than as an external tool.
+The location of this file on the filesystem can be configured in **Preferences** -> **Rust** -> **Rls config**.
+
+More details at https://github.com/eclipse/corrosion/pull/183
 
 #### rustfmt caveat 
 
 Source code formatting is provided by `rustfmt` via RLS. This means that the vast majority of formatting rules applied are the ones that would be applied by `cargo fmt` from the root of the project, including user tweaks via `.rustfmt.toml`.
 
-There is one **exception** of how **tab indents** are handled. The following settings will **override* the `rustfmt` defaults:
+There is one **exception** of how **tab indents** are handled. The following settings will **override* the `rustfmt`**defaults**:
 
 **General** -> **Text editors** -> **Insert spaces for tabs** 
 
@@ -113,7 +124,7 @@ By default, the setting above will be **unticked** so `Ctrl+Shift+S` will use **
 In order to restore consistency between the twos, there are two options:
 
 ##### indent with tabs
-To make sure both Corrosion and `cargo fmt` use tabs, **untick** the setting above and add the following settings to `.rustfmt.toml`:
+To make sure both Corrosion and `cargo fmt` use tabs, **untick** the setting above and add the following settings to `.rustfmt.toml` in the root of your Rust project:
 
 ```
 hard_tabs=true
@@ -127,7 +138,7 @@ hard_tabs=true
 
 ## Configuring logging
 
-Logging is a powerful diagnostic tools... If you know where the logs are, that is. The various Corrosion components and dependencies may scatter logging information across a range of destinations, so, depending on where your error originates, the related messages may appear in different log files, or in no logs at all if not configured appropriately.
+Logging is a powerful diagnostic tools... If you know where the logs are, that is. The various Corrosion components and dependencies may scatter logging information across multiple destinations, so, depending on where your error originates, the related messages may appear in different log files, or in no logs at all if not configured appropriately.
 
 #### Enable RLS logging
 
@@ -139,9 +150,7 @@ Once the logging is active, and you have restarted your IDE, Eclipse will output
 
 `path/to/your/eclipse_rust_workspace/languageServers-log/org.eclipse.corrosion.rls.log`
 
-It is possible to redirect logs to the Eclipse console but it's been reported that the process may cause Eclipse to hang randomly, so logging to files is recommended.
-
-
+It is possible to redirect logs to the Eclipse **console** with the settings above, but it's been reported that the process may cause Eclipse to hang randomly, so logging to files is recommended.
 
 #### Even more logging
 
@@ -151,7 +160,7 @@ In LSP4E std-err outputs are written to the language server log. This mixes both
 
 As the `RUST_LOG` can't be (yet) set from inside the Rust configuration dialog in the IDE, it has to be set externally, before starting Eclipse IDE.
 
-#### Examples:
+##### Env var examples
 
 Linux:
 - open a terminal window

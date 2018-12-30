@@ -4,37 +4,66 @@ This is a collection of cases which have been reported and discussed on the http
 
 ### Components and where to find them
 
-The Eclipse IDE for Rust Developers builds mainly on four subprojects:
+The Eclipse IDE for Rust Developer functionality is provided by cooperation of a few main components. In the general case, the installation process will spare you the pain of finding and adding these together, but it's often necessary at least to know about them when tracking the root cause of an issue.
 
-- The basic Eclipse IDE platform
-  - https://www.eclipse.org/downloads/packages/
+Problems will be resolved a lot quicker if they're posted to the relevant sub-project issue tracker earlier on. However, pinpointing a malfunctioning component is often not trivial, in which case searching the main https://github.com/eclipse/corrosion/issues, or posting to it, is usually a good first step.
 
-- The Corrosion Rust development plugin
-https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-rust-developers-includes-incubating-components
+#### The **Eclipse IDE** platform
 
-https://github.com/eclipse/corrosion - this repository
-https://github.com/eclipse/corrosion/issues 
-https://github.com/eclipse/corrosion.git
+Latest releases available at https://www.eclipse.org/downloads/packages/. Multiple flavours available for all your programming needs.
 
-Corrosion Snapshots - http://download.eclipse.org/corrosion/snapshots/
-Corrosion Releases - http://download.eclipse.org/corrosion/releases/
+#### The **Eclipse Corrosion** plugin
 
-- The TextMate plugin which provides basic language-aware text editing 
+Support for Rust is provided by the Corrosion plugin. There are two ways to get this up-and-running
 
-https://github.com/eclipse/tm4e
-https://github.com/eclipse/tm4e/issues
-https://github.com/eclipse/tm4e.git
+1. You can get the all-in-one Eclipse IDE for Rust developer packages from here. This is a self-contained solution which quickly enables Rust development out-of-the box at https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-rust-developers-includes-incubating-components
+2. Install any flavour of Eclipse from the link above and then add the Corrosion plugin with **Help** > **Install new software** > **Add**, then choose one of the repositories:
+    - Corrosion Releases - http://download.eclipse.org/corrosion/releases/
+    - Corrosion Snapshots - http://download.eclipse.org/corrosion/snapshots/
+ 
+The Corrosion Releases channel contains older, more stable code while the Snapshots one is more up-to-date with bug fixes but also more likely to contain unfinished features and regression bugs.
 
-https://projects.eclipse.org/projects/technology.tm4e
-TM4E Snapshots - http://download.eclipse.org/tm4e/snapshots/
+For support, contributions and troubleshooting, here's a set of reference URLs
 
-- Language Server Protocol for Eclipse (LSP4E)
+- GitHub project: https://github.com/eclipse/corrosion
+- Issue tracker: https://github.com/eclipse/corrosion/issues
+- Source code Git repository for cloning: https://github.com/eclipse/corrosion.git
 
-LSP4E Snapshots - http://download.eclipse.org/lsp4e/snapshots/
+#### The **TextMate plugin** for Eclipse
 
-### Gitter chat
+The TextMate project offers wide support for general language-aware text editing. Rust support is provided as one of the options via a pre-built configuration.
 
-https://gitter.im/eclipse_rust_development/Corrosion
+- Original project at Eclipse: https://projects.eclipse.org/projects/technology.tm4e
+- GitHub project: https://github.com/eclipse/tm4e
+- Issue tracker: https://github.com/eclipse/tm4e/issues
+- Source code Git repository for cloning: https://github.com/eclipse/tm4e.git
+
+It is sometimes necessary, albeit very rarely, to get the latest version of TextMate from the snapshot project repository:
+
+- TM4E Snapshots: http://download.eclipse.org/tm4e/snapshots/
+
+#### The **Rust Language Server** (RLS)
+
+RLS runs in the background as a separate process and provides most of the IDE functionality, such as autocompletion, symbol search and refactoring. It is distributed as a Rust toolchain component rather than a part of Corrosion and it's a pre-requisite. For the impatient:
+
+```
+rustup update
+rustup component add rls-preview rust-analysis rust-src
+```
+
+For those who don't mind to skim throught detail: GitHub project: https://github.com/rust-lang/rls
+
+#### The **Language Server Protocol for Eclipse** (LSP4E)
+
+This component allows Eclipse to communicate to all the Language servers, including the RLS, via Language Server protocol.
+
+- LSP4E Snapshots - http://download.eclipse.org/lsp4e/snapshots/
+
+### Support communication channels
+
+Discussions and support are mainly provided via the GitHub issue tracker: at https://github.com/eclipse/corrosion/issues. 
+
+There is also a relatively quiet Gitter channel for real-time discussions https://gitter.im/eclipse_rust_development/Corrosion
 
 ### rls.conf
 
@@ -43,8 +72,6 @@ Hi @theDragonFire: the `.cargo/rls.conf` file contains the startup settings for 
 In this file you should be able to specify any of the valid RLS settings, as listed in https://github.com/rust-lang/rls#configuration. Syntax for these options is IDE-specific: the PR at https://github.com/eclipse/corrosion/pull/183 contains an example config file for Corrosion.
 
 Unfortunately, none of the settings in RLS, as I can understand, allow you to specify `rustc` path, which should be set up for you by `rustup` (check your env vars?) or `racer` - which AFAIK is linked into the RLS as a library rather than as an external tool.
-
-
 
 ### Enable RLS logging
 

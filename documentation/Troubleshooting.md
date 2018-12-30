@@ -1,23 +1,30 @@
 ## Troubleshooting guide
 
-This is a collection of cases which have been reported and discussed on the https://github.com/eclipse/corrosion/issues GitHub tracker.
+This is a collection of troubleshooting tips and workarounds which have often popped up in discussion on the https://github.com/eclipse/corrosion/issues GitHub tracker.
+
+----
 
 ### Components and where to find them
 
-The Eclipse IDE for Rust Developer functionality is provided by cooperation of a few main components. In the general case, the installation process will spare you the pain of finding and adding these together, but it's often necessary at least to know about them when tracking the root cause of an issue.
+The Eclipse IDE for Rust Developer functionality is provided by cooperation of a few main components. In the general case, the installation process will spare you the pain of finding and putting these together, but it's often necessary at least to know about them when tracking the root cause of an issue.
 
 Problems will be resolved a lot quicker if they're posted to the relevant sub-project issue tracker earlier on. However, pinpointing a malfunctioning component is often not trivial, in which case searching the main https://github.com/eclipse/corrosion/issues, or posting to it, is usually a good first step.
 
 #### The **Eclipse IDE** platform
 
-Latest releases available at https://www.eclipse.org/downloads/packages/. Multiple flavours available for all your programming needs.
+Latest releases available at https://www.eclipse.org/downloads/packages/. Multiple flavours available for all your programming needs. In general, Rust plugin development targets recent builds, so if you're having problem of sorts, make sure you have a decently up-to-date platform. Eclipse can be configured to update itself via repositories. In general, the automatic update works as expected. If the IDE fails after an updated, for any reason, there are two workarounds to try:
+
+- start Eclipse from a new workspace
+- start Eclipse from a new install.
+
+Multiple workspaces and versions of Eclipse can be easily installed side by side so you don't have to destroy your carefully crafted setup just for the sake of testing a new version.
 
 #### The **Eclipse Corrosion** plugin
 
-Support for Rust is provided by the Corrosion plugin. There are two ways to get this up-and-running
+Support for Rust is provided by the Corrosion plugin. There are two ways to get this quickly up-and-running:
 
 1. You can get the all-in-one Eclipse IDE for Rust developer packages from here. This is a self-contained solution which quickly enables Rust development out-of-the box at https://www.eclipse.org/downloads/packages/release/2018-09/r/eclipse-ide-rust-developers-includes-incubating-components
-2. Install any flavour of Eclipse from the link above and then add the Corrosion plugin with **Help** > **Install new software** > **Add**, then choose one of the repositories:
+2. Install any flavour of Eclipse from the link above and then add the Corrosion plugin with **Help** -> **Install new software** -> **Add**, then choose one of the repositories:
     - Corrosion Releases - http://download.eclipse.org/corrosion/releases/
     - Corrosion Snapshots - http://download.eclipse.org/corrosion/snapshots/
  
@@ -53,27 +60,43 @@ rustup component add rls-preview rust-analysis rust-src
 
 For those who don't mind to skim throught detail: GitHub project: https://github.com/rust-lang/rls
 
+As the RLS is started as a child process of Eclipse, all the OS shenanigans of environment variable and working directories inheritance do apply.
+
 #### The **Language Server Protocol for Eclipse** (LSP4E)
 
 This component allows Eclipse to communicate to all the Language servers, including the RLS, via Language Server protocol.
 
 - LSP4E Snapshots - http://download.eclipse.org/lsp4e/snapshots/
 
+----
+
 ### Support communication channels
 
-Discussions and support are mainly provided via the GitHub issue tracker: at https://github.com/eclipse/corrosion/issues. 
+Discussions and support are mainly provided via the GitHub issue tracker at https://github.com/eclipse/corrosion/issues. 
 
 There is also a relatively quiet Gitter channel for real-time discussions https://gitter.im/eclipse_rust_development/Corrosion
 
-### rls.conf
+----
+### Configuring Rust and RLS
 
-Hi @theDragonFire: the `.cargo/rls.conf` file contains the startup settings for the `rls` and it is optional. If you don't have one, Corrosion will ignore it and guess some sensible (!) defaults. 
+At the time of writing, RLS relies mostly on the host application (ie Eclipse) for configuration.
+
+
+#### rls.conf
+
+The `.cargo/rls.conf` file contains the startup settings for the `rls` and it is optional. If you don't have one, Corrosion will ignore it and guess some sensible defaults. 
 
 In this file you should be able to specify any of the valid RLS settings, as listed in https://github.com/rust-lang/rls#configuration. Syntax for these options is IDE-specific: the PR at https://github.com/eclipse/corrosion/pull/183 contains an example config file for Corrosion.
 
 Unfortunately, none of the settings in RLS, as I can understand, allow you to specify `rustc` path, which should be set up for you by `rustup` (check your env vars?) or `racer` - which AFAIK is linked into the RLS as a library rather than as an external tool.
 
-### Enable RLS logging
+----
+
+## Configuring logging
+
+Logging is a powerful diagnostic tools... If you know where the logs are, that is. The various Corrosion components and dependencies may scatter logging information across a range of destinations, so, depending on where your error originates, the related messages may appear in different log files, or in no logs at all if not configured appropriately.
+
+#### Enable RLS logging
 
 Language Server log to file can be enabled for the the Rust Language server here:
 
@@ -83,7 +106,11 @@ Once the logging is active, and you have restarted your IDE, Eclipse will output
 
 `path/to/your/eclipse_rust_workspace/languageServers-log/org.eclipse.corrosion.rls.log`
 
-### Even more logging
+It is possible to redirect logs to the Eclipse console but it's been reported that the process may cause Eclipse to hang randomly, so logging to files is recommended.
+
+
+
+#### Even more logging
 
 Error messages that are enabled via the environment variable `RUST_LOG` are written to std-err.
 
@@ -104,16 +131,17 @@ Windows:
 - add `RUST_LOG` environment variable from the Environment Variables system dialog, with value `rls=debug`
 - restart Eclipse
 
-
 ### Other source of logs
 
 Some useful diagnostic messages are sent to the Eclipse `Error log` view:
 
 ![image](https://user-images.githubusercontent.com/889291/49970820-6c8ebf00-ff24-11e8-8bc2-72ab4c92ece4.png)
 
+----
+
 ## Common issues
 
-### Multiple duplicate highlight icons in perspective toolbar
+#### Multiple duplicate highlight icons in perspective toolbar
 
 Occasionally, the toolbar spawns an extra highlight icon. After some time you can end up with a crowded toolbar, like this:  
 
@@ -123,7 +151,7 @@ This is a long known issue with the eclipse platform, reported a https://bugs.ec
 
 GitHub Corrosion Reference: https://github.com/eclipse/corrosion/issues/120
 
-#### Workaround
+##### Workaround
 
 1. Close the Eclipse IDE
 2. open `path/to/workspace_rust/.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi` in a text editor
@@ -145,8 +173,7 @@ GitHub Corrosion Reference: https://github.com/eclipse/corrosion/issues/120
 5. Save and exit
 6. Start Eclipse Ide
 
-### Cannot place breakpoint in library code
-### Cannot browse/Ctrl+click/go-to-definition in library code 
+#### Cannot place breakpoint in library code/Cannot browse/Ctrl+click/go-to-definition in library code 
 
 In order for a Rust breakpoint to be placed in a source file, the source file must be part of the workspace, and that includes all the files in the `.cargo` cache.
 
@@ -154,7 +181,7 @@ Corrosion should automatically import the `.cargo` cache in the workspace as a p
 
 Should this process fail, some useful functionality will not work.
 
-#### Workaround
+##### Workaround
 
 Manually import the `.cargo` folder as a project in your Rust IDE workspace by:
 
@@ -163,7 +190,7 @@ Manually import the `.cargo` folder as a project in your Rust IDE workspace by:
 3. **Import source** `/your/home/path/.cargo` should be selected
 4. Click on **Finish**
 
-### Missing field 'codeActionKind'.
+#### Missing field 'codeActionKind'.
 
 > org.eclipse.lsp4j.jsonrpc.ResponseErrorException: missing field 'codeActionKind'.
 
@@ -173,15 +200,15 @@ https://bugs.eclipse.org/bugs/show_bug.cgi?id=541851
 https://git.eclipse.org/c/lsp4e/lsp4e.git/commit/?id=6cc786f0d9bc1c12b818f7677796e2b4efdefbef
 https://github.com/rust-lang/rls/issues/1161
 
-#### Fix
+##### Fix
 
 Installing/upgrading to an up-to-date version of Eclipse IDE for Rust Developers such as 2018-09 or 2018-12, or manually updating from the Snapshot update sites, will resolve it.
 
-### Annoying autoclosing
+#### Annoying autoclosing
 
 The implementation of closing bracket or quote sometimes inserts more than desired when typing quickly. This is currently (2018/12) being addressed in https://github.com/eclipse/tm4e/issues/192.
 
-#### Workaround
+##### Workaround
 
 In the meantime, if you find autoclosing too annoying, you can disable it altogether:
 
@@ -206,7 +233,7 @@ You can try to run
 
 from the root of your crate and at least see if there is a workaround for that specific crate. 
 
-#### Workarounds
+##### Workarounds
 
 - It has been reported that, in some cases, closing the IDE and doing a full `cargo clean` of the affected project can fix the problem.
 

@@ -79,16 +79,49 @@ There is also a relatively quiet Gitter channel for real-time discussions https:
 ----
 ### Configuring Rust and RLS
 
-At the time of writing, RLS relies mostly on the host application (ie Eclipse) for configuration.
+At the time of writing, RLS relies mostly on the host application (ie Eclipse) for configuration. Configuration options are kind of shuffled around in multiple **Preference tabs**. Before calling a feature "missing" you may want to look at the following tab settings
 
+- **Rust**
+- **Language Servers**
+- **General** -> **Editors**
+- **TextMate** -> **Grammar**
+- **TextMate** -> **Language Configuration**
+- **TextMate** -> **Theme**
+
+As Corrosion uses TextMate, the **Editors** section for **Colors and Fonts** has no effect. Customization is limited to choosing one of the **TextMate** -> **Theme** themes (which fortunately provide a decent default for both a light and a dark setup).
 
 #### rls.conf
+
+Functionality to read `.rls.conf` from the RLS directly has been long removed. Eclipse provides an alternative for this configuration file.
 
 The `.cargo/rls.conf` file contains the startup settings for the `rls` and it is optional. If you don't have one, Corrosion will ignore it and guess some sensible defaults. 
 
 In this file you should be able to specify any of the valid RLS settings, as listed in https://github.com/rust-lang/rls#configuration. Syntax for these options is IDE-specific: the PR at https://github.com/eclipse/corrosion/pull/183 contains an example config file for Corrosion.
 
 Unfortunately, none of the settings in RLS, as I can understand, allow you to specify `rustc` path, which should be set up for you by `rustup` (check your env vars?) or `racer` - which AFAIK is linked into the RLS as a library rather than as an external tool.
+
+#### rustfmt caveat 
+
+Source code formatting is provided by `rustfmt` via RLS. This means that the vast majority of formatting rules applied are the ones that would be applied by `cargo fmt` from the root of the project, including user tweaks via `.rustfmt.toml`.
+
+There is one **exception** of how **tab indents** are handled. The following settings will **override* the `rustfmt` defaults:
+
+**General** -> **Text editors** -> **Insert spaces for tabs** 
+
+By default, the setting above will be **unticked** so `Ctrl+Shift+S` will use **tabs** for indent, while `cargo fmt` will use **4 spaces**.
+
+In order to restore consistency between the twos, there are two options:
+
+##### indent with tabs
+To make sure both Corrosion and `cargo fmt` use tabs, **untick** the setting above and add the following settings to `.rustfmt.toml`:
+
+```
+hard_tabs=true
+```
+
+##### indent with spaces
+
+**tick** the setting above and make sure the **Displayed tab width** in the same form is set to **4**
 
 ----
 

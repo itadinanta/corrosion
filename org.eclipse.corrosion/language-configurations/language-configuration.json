@@ -25,6 +25,12 @@
        ["'", "'"],
        ["\"", "\""]
    ],
+	"folding": {
+		"markers": {
+			"start": "^.*\\{",
+			"end": "^.*\\}"
+		}
+	},   
    "onEnterRules":[
        {"beforeText": "^\\s*/{3}.*$", "action":{ "indentAction": "None", "appendText": "/// " }},
        {"beforeText": "^\\s*/{2}\\!.*$", "action": { "indentAction": "None", "appendText": "//! " }},
